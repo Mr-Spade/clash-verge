@@ -15,10 +15,9 @@ const SIDECAR_HOST = execSync("rustc -vV")
   .match(/(?<=host: ).+(?=\s*)/g)[0];
 
 /* ======= clash ======= */
-const CLASH_STORAGE_PREFIX = "https://release.dreamacro.workers.dev/";
-const CLASH_URL_PREFIX =
-  "https://github.com/Dreamacro/clash/releases/download/premium/";
-const CLASH_LATEST_DATE = "latest";
+// const CLASH_STORAGE_PREFIX = "https://release.dreamacro.workers.dev/";
+const CLASH_URL_PREFIX = "https://github.com/Mr-Spade/clash/releases/download/";
+const CLASH_VERSION = "v1.14.1";
 
 const CLASH_MAP = {
   "win32-x64": "clash-windows-amd64",
@@ -57,9 +56,9 @@ function clash() {
 
   const isWin = platform === "win32";
   const urlExt = isWin ? "zip" : "gz";
-  const downloadURL = `${CLASH_URL_PREFIX}${name}-${CLASH_LATEST_DATE}.${urlExt}`;
+  const downloadURL = `${CLASH_URL_PREFIX}${CLASH_VERSION}/${name}-${CLASH_VERSION}.${urlExt}`;
   const exeFile = `${name}${isWin ? ".exe" : ""}`;
-  const zipFile = `${name}.${urlExt}`;
+  const zipFile = `${name}-${CLASH_VERSION}.${urlExt}`;
 
   return {
     name: "clash",
@@ -70,23 +69,23 @@ function clash() {
   };
 }
 
-function clashS3() {
-  const name = CLASH_MAP[`${platform}-${arch}`];
+// function clashS3() {
+//   const name = CLASH_MAP[`${platform}-${arch}`];
 
-  const isWin = platform === "win32";
-  const urlExt = isWin ? "zip" : "gz";
-  const downloadURL = `${CLASH_STORAGE_PREFIX}${CLASH_LATEST_DATE}/${name}-${CLASH_LATEST_DATE}.${urlExt}`;
-  const exeFile = `${name}${isWin ? ".exe" : ""}`;
-  const zipFile = `${name}.${urlExt}`;
+//   const isWin = platform === "win32";
+//   const urlExt = isWin ? "zip" : "gz";
+//   const downloadURL = `${CLASH_STORAGE_PREFIX}${CLASH_LATEST_DATE}/${name}-${CLASH_LATEST_DATE}.${urlExt}`;
+//   const exeFile = `${name}${isWin ? ".exe" : ""}`;
+//   const zipFile = `${name}.${urlExt}`;
 
-  return {
-    name: "clash",
-    targetFile: `clash-${SIDECAR_HOST}${isWin ? ".exe" : ""}`,
-    exeFile,
-    zipFile,
-    downloadURL,
-  };
-}
+//   return {
+//     name: "clash",
+//     targetFile: `clash-${SIDECAR_HOST}${isWin ? ".exe" : ""}`,
+//     exeFile,
+//     zipFile,
+//     downloadURL,
+//   };
+// }
 
 function clashMeta() {
   const name = META_MAP[`${platform}-${arch}`];
@@ -300,7 +299,7 @@ const resolveGeoIP = () =>
   });
 
 const tasks = [
-  { name: "clash", func: () => resolveSidecar(clashS3()), retry: 5 },
+  { name: "clash", func: () => resolveSidecar(clash()), retry: 5 },
   { name: "clash-meta", func: () => resolveSidecar(clashMeta()), retry: 5 },
   { name: "wintun", func: resolveWintun, retry: 5, winOnly: true },
   { name: "service", func: resolveService, retry: 5, winOnly: true },
